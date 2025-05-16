@@ -2,7 +2,6 @@
 FastAPI router for MCP configurations.
 """
 import logging
-from typing import Dict, Any, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -76,9 +75,9 @@ async def get_mcp_service(session: AsyncSession = Depends(get_session)) -> MCPSe
 # Create MCP record
 @MCPRouter.post("/configs", response_model=MCPModelClass, status_code=201)
 async def create_mcp(
-    request: MCPCreateRequest,
-    user: UserData = Depends(get_current_user),
-    mcp_service: MCPService = Depends(get_mcp_service)
+        request: MCPCreateRequest,
+        user: UserData = Depends(get_current_user),
+        mcp_service: MCPService = Depends(get_mcp_service)
 ):
     """
     Create a new MCP record.
@@ -117,9 +116,9 @@ async def create_mcp(
 # Get MCP record by ID
 @MCPRouter.get("/configs/{mcp_id}", response_model=MCPModelClass)
 async def get_mcp_by_id(
-    mcp_id: str = Path(..., description="ID of the MCP record"),
-    user: UserData = Depends(get_current_user),
-    mcp_service: MCPService = Depends(get_mcp_service)
+        mcp_id: str = Path(..., description="ID of the MCP record"),
+        user: UserData = Depends(get_current_user),
+        mcp_service: MCPService = Depends(get_mcp_service)
 ):
     """
     Get MCP record by ID.
@@ -150,8 +149,8 @@ async def get_mcp_by_id(
 # Get all MCP records for a user
 @MCPRouter.get("/configs", response_model=MCPListResponse)
 async def get_mcps_by_user(
-    user: UserData = Depends(get_current_user),
-    mcp_service: MCPService = Depends(get_mcp_service)
+        user: UserData = Depends(get_current_user),
+        mcp_service: MCPService = Depends(get_mcp_service)
 ):
     """
     Get all MCP records for a user.
@@ -180,10 +179,10 @@ async def get_mcps_by_user(
 # Update MCP record
 @MCPRouter.put("/configs/{mcp_id}", response_model=MCPModelClass)
 async def update_mcp(
-    request: MCPUpdateRequest,
-    mcp_id: str = Path(..., description="ID of the MCP record"),
-    user: UserData = Depends(get_current_user),
-    mcp_service: MCPService = Depends(get_mcp_service)
+        request: MCPUpdateRequest,
+        mcp_id: str = Path(..., description="ID of the MCP record"),
+        user: UserData = Depends(get_current_user),
+        mcp_service: MCPService = Depends(get_mcp_service)
 ):
     """
     Update MCP record.
@@ -219,9 +218,9 @@ async def update_mcp(
 # Delete MCP record
 @MCPRouter.delete("/configs/{mcp_id}", status_code=204)
 async def delete_mcp(
-    mcp_id: str = Path(..., description="ID of the MCP record"),
-    user: UserData = Depends(get_current_user),
-    mcp_service: MCPService = Depends(get_mcp_service)
+        mcp_id: str = Path(..., description="ID of the MCP record"),
+        user: UserData = Depends(get_current_user),
+        mcp_service: MCPService = Depends(get_mcp_service)
 ):
     """
     Delete MCP record.
@@ -250,10 +249,10 @@ async def delete_mcp(
 # Toggle inactive status
 @MCPRouter.patch("/configs/{mcp_id}/toggle-inactive", response_model=MCPModelClass)
 async def toggle_inactive(
-    request: MCPToggleInactiveRequest,
-    mcp_id: str = Path(..., description="ID of the MCP record"),
-    user: UserData = Depends(get_current_user),
-    mcp_service: MCPService = Depends(get_mcp_service)
+        request: MCPToggleInactiveRequest,
+        mcp_id: str = Path(..., description="ID of the MCP record"),
+        user: UserData = Depends(get_current_user),
+        mcp_service: MCPService = Depends(get_mcp_service)
 ):
     """
     Toggle inactive status.

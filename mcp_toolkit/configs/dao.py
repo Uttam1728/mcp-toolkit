@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class BaseDao:
     """Base Data Access Object with common CRUD operations."""
-    
+
     def __init__(self, session: AsyncSession, db_model: Type):
         """
         Initialize the DAO with a session and model.
@@ -26,7 +26,7 @@ class BaseDao:
         """
         self.session = session
         self.db_model = db_model
-        
+
     def add_object(self, **kwargs):
         """
         Create a new object with the given attributes.
@@ -40,7 +40,7 @@ class BaseDao:
         obj = self.db_model(**kwargs)
         self.session.add(obj)
         return obj
-        
+
     async def get_all(self):
         """
         Get all objects.

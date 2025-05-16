@@ -7,7 +7,7 @@ from typing import Dict, List, Any
 
 class MCPHelper:
     """Helper class for MCP client operations."""
-    
+
     @staticmethod
     def filter_mcp_input_schema(input_schema: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -90,7 +90,7 @@ class MCPHelper:
                 })
 
         return tool_calls_formatted
-    
+
     @staticmethod
     def convert_to_anthropic_tool_format(final_tool_calls: Dict[str, Any]) -> List[Dict[str, Any]]:
         """

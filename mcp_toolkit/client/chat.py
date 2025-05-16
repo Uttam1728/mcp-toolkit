@@ -22,7 +22,7 @@ class MCPChat:
     This class handles the integration between LLM chat completions and MCP tools,
     allowing tools to be called during chat completions.
     """
-    
+
     def __init__(
             self,
             model: str,
@@ -77,7 +77,7 @@ class MCPChat:
             provider: The LLM provider ('openai' or 'anthropic')
         """
         stdio_server_map = {}
-        
+
         # Use the provided MCP servers
         sse_server_map = self.mcp_servers
 
@@ -110,7 +110,6 @@ class MCPChat:
             yield create_llm_chunk(MessageType.PROGRESS, f"Executing tool: {tool_name}...",
                                    provider=provider)
 
-            
             observation = await self.client_manager.call_tool(
                 tool_name, tool_args, self.tool_map
             )
@@ -176,7 +175,7 @@ class MCPChat:
                     "tools": self.tools,
                     "stream": self.stream,
                 }
-                
+
                 # Add optional parameters if provided
                 if self.stream_options:
                     completion_params["stream_options"] = self.stream_options
@@ -213,12 +212,13 @@ class MCPChat:
                                     if tool_call.function.name:
                                         final_tool_calls[tool_call.index]["function"]["name"] = tool_call.function.name
                                     if tool_call.function.arguments:
-                                        final_tool_calls[tool_call.index]["function"]["arguments"] += tool_call.function.arguments
-                        
+                                        final_tool_calls[tool_call.index]["function"][
+                                            "arguments"] += tool_call.function.arguments
+
                         # Process content from delta
                         if hasattr(chunk.choices[0].delta, 'content') and chunk.choices[0].delta.content:
                             content_buffer += chunk.choices[0].delta.content
-                        
+
                         # Pass through the chunk
                         yield chunk
                     except Exception as e:
@@ -249,7 +249,7 @@ class MCPChat:
                         "messages": self.chat_messages,
                         "stream": self.stream,
                     }
-                    
+
                     # Add optional parameters if provided
                     if self.stream_options:
                         follow_up_params["stream_options"] = self.stream_options
@@ -264,7 +264,7 @@ class MCPChat:
                     if content_buffer:
                         self.chat_messages.append({"role": "assistant", "content": content_buffer})
                     break
-            
+
         except Exception as e:
             logger.error(f"Error in process_openai_stream_chat: {e}")
             yield create_llm_chunk(MessageType.ERROR, f"Error: {str(e)}", provider='openai')
@@ -286,14 +286,14 @@ class MCPChat:
                     "messages": self.chat_messages,
                     "tools": self.tools,
                 }
-                
+
                 # Add temperature if provided
                 if self.temperature is not None:
                     completion_params["temperature"] = self.temperature
 
                 # Call the OpenAI API
                 response = await self.client.chat.completions.create(**completion_params)
-                
+
                 # Check for tool calls
                 if response.choices[0].message.tool_calls:
                     # Format tool calls
@@ -307,40 +307,40 @@ class MCPChat:
                                 "arguments": tool_call.function.arguments
                             }
                         }
-                    
+
                     # Add assistant message with tool calls
                     self.chat_messages.append({
                         "role": "assistant",
                         "content": None,
                         "tool_calls": MCPHelper.convert_to_openai_tool_format(tool_calls)
                     })
-                    
+
                     # Process each tool call
                     for tool_call in tool_calls.values():
                         tool_name = tool_call["function"]["name"]
                         tool_args = json.loads(tool_call["function"]["arguments"])
-                        
+
                         # Call the tool
                         observation = await self.client.manager.call_tool(
                             tool_name, tool_args, self.tool_map
                         )
-                        
+
                         # Add tool result message
                         tool_result_message = MCPHelper.create_tool_result_message(
                             tool_call["id"], str(observation), 'openai'
                         )
                         self.chat_messages.append(tool_result_message)
-                    
+
                     # Get final response
                     follow_up_params = {
                         "model": self.model,
                         "messages": self.chat_messages,
                     }
-                    
+
                     # Add temperature if provided
                     if self.temperature is not None:
                         follow_up_params["temperature"] = self.temperature
-                        
+
                     final_response = await self.client.chat.completions.create(**follow_up_params)
                     return final_response
                 else:
@@ -350,10 +350,10 @@ class MCPChat:
                         "content": response.choices[0].message.content
                     })
                     return response
-            
+
             # If we've reached max turns, return the last response
             return response
-            
+
         except Exception as e:
             logger.error(f"Error in process_openai_non_stream_chat: {e}")
             raise
@@ -395,7 +395,7 @@ class MCPChat:
                     "messages": self.chat_messages,
                     "tools": self.tools,
                 }
-                
+
                 # Add optional parameters if provided
                 if self.max_tokens is not None:
                     completion_params["max_tokens"] = self.max_tokens
@@ -461,7 +461,7 @@ class MCPChat:
                         "model": self.model,
                         "messages": self.chat_messages,
                     }
-                    
+
                     # Add optional parameters if provided
                     if self.max_tokens is not None:
                         follow_up_params["max_tokens"] = self.max_tokens
@@ -474,7 +474,7 @@ class MCPChat:
                 else:
                     # If no tool calls, we're done with this turn
                     break
-            
+
         except Exception as e:
             logger.error(f"Error in process_anthropic_stream_chat: {e}")
             yield create_llm_chunk(MessageType.ERROR, f"Error: {str(e)}", provider='anthropic')

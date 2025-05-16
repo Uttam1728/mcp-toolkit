@@ -7,7 +7,7 @@ class MCPException(Exception):
     """Base exception for MCP module."""
     error_code = 5100
     message = "An error occurred in the MCP module."
-    
+
     def __init__(self, message=None):
         self.message = message or self.message
         super().__init__(self.message)

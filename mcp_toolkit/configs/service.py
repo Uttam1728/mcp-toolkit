@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 class UserData:
     """Simple user data class for authorization."""
-    
+
     def __init__(self, user_id: str):
         """
         Initialize user data.
@@ -167,7 +167,7 @@ class MCPService:
             # Update the record
             await self.mcp_dao.update_mcp(mcp_id, update_data)
             await self.session.commit()
-            
+
             # Get the updated record
             updated_mcp = await self.mcp_dao.get_mcp_by_id(mcp_id)
             return updated_mcp
@@ -241,7 +241,7 @@ class MCPService:
             # Toggle inactive status
             await self.mcp_dao.toggle_inactive(mcp_id, inactive)
             await self.session.commit()
-            
+
             # Get the updated record
             updated_mcp = await self.mcp_dao.get_mcp_by_id(mcp_id)
             return updated_mcp

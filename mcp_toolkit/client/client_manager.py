@@ -20,7 +20,7 @@ class MCPClient:
     This class provides a simpler interface for applications that only need
     to connect to a single MCP server.
     """
-    
+
     def __init__(self, sse_url: Optional[str] = None, stdio_params: Optional[Dict] = None):
         """
         Initialize the MCP client.
@@ -31,12 +31,12 @@ class MCPClient:
         """
         if not sse_url and not stdio_params:
             raise ValueError("Either sse_url or stdio_params must be provided")
-            
+
         self.sse_url = sse_url
         self.stdio_params = stdio_params
         self.session = None
         self.exit_stack = AsyncExitStack()
-        
+
     async def initialize(self):
         """Initialize the client connection."""
         try:
@@ -50,7 +50,7 @@ class MCPClient:
                     stdio_client(self.stdio_params)
                 )
                 read, write = stdio_transport
-                
+
             self.session = await self.exit_stack.enter_async_context(
                 ClientSession(read, write)
             )
@@ -59,15 +59,15 @@ class MCPClient:
         except Exception as e:
             logger.error(f"Error initializing MCP client: {e}")
             raise
-            
+
     async def list_tools(self):
         """List available tools from the MCP server."""
         if not self.session:
             raise RuntimeError("Client not initialized. Call initialize() first.")
-            
+
         tools = await self.session.list_tools()
         return tools.tools
-        
+
     async def call_tool(self, tool_name: str, arguments: Dict[str, Any]):
         """
         Call a tool on the MCP server.
@@ -81,10 +81,10 @@ class MCPClient:
         """
         if not self.session:
             raise RuntimeError("Client not initialized. Call initialize() first.")
-            
+
         result = await self.session.call_tool(tool_name, arguments=arguments)
         return result.content[0].text
-        
+
     async def close(self):
         """Close the client connection."""
         await self.exit_stack.aclose()
@@ -97,7 +97,7 @@ class MultipleMCPClientManager:
     This class manages connections to multiple MCP servers and provides
     a unified interface for listing and calling tools across all servers.
     """
-    
+
     def __init__(self, stdio_server_map: Dict[str, Dict], sse_server_map: List[Any]):
         """
         Initialize the MCP client manager.

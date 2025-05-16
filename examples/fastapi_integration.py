@@ -2,23 +2,19 @@
 Example of integrating MCP with FastAPI.
 """
 import logging
-import uuid
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 
 import uvicorn
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from mcp_toolkit.configs import (
     MCPService,
     MCPRouter,
-    MCPCreateRequest,
-    MCPModelClass,
-    UserData
 )
 from mcp_toolkit.configs.models import Base
+from mcp_toolkit.configs.service import UserData
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -73,7 +69,7 @@ async def list_tools(mcp_service: MCPService = Depends(get_mcp_service)):
         # Get all active MCP servers
         mcps = await mcp_service.get_mcps_by_user(UserData(user_id="example_user"))
         active_mcps = [mcp for mcp in mcps if not mcp.inactive]
-        
+
         # This would normally use the MCP client to list tools
         # For this example, we'll return dummy data
         tools = [
@@ -84,7 +80,7 @@ async def list_tools(mcp_service: MCPService = Depends(get_mcp_service)):
             }
             for i, mcp in enumerate(active_mcps)
         ]
-        
+
         return tools
     except Exception as e:
         logger.error(f"Error listing tools: {e}")
@@ -97,7 +93,7 @@ async def startup():
     """Create database tables on startup."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    
+
     # Create a default MCP server for testing
     async with async_session() as session:
         mcp_service = MCPService(session=session)

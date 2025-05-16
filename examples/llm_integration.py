@@ -4,13 +4,12 @@ Example of integrating MCP with LLM providers (OpenAI and Anthropic).
 import asyncio
 import logging
 import os
-from typing import List, Dict, Any
 
 import openai
 from anthropic import AsyncAnthropic
 
-from mcp_toolkit.client import MCPChat, MCPServerModel
-from mcp_toolkit.client.constants import MessageType
+from mcp_toolkit.client import MCPChat
+from mcp_toolkit.client.constants import MessageType, MCPServerModel
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -37,16 +36,16 @@ MCP_SERVERS = [
 async def openai_example():
     """Example of using MCP with OpenAI."""
     logger.info("Running OpenAI example...")
-    
+
     # Initialize OpenAI client
     client = openai.AsyncOpenAI(api_key=OPENAI_API_KEY)
-    
+
     # Create messages
     messages = [
         {"role": "system", "content": "You are a helpful assistant that can use tools."},
         {"role": "user", "content": "Search for information about Python programming language."}
     ]
-    
+
     # Create MCP chat processor
     processor = MCPChat(
         model="gpt-4",
@@ -57,7 +56,7 @@ async def openai_example():
         user_data={"userId": "example_user"},
         mcp_servers=MCP_SERVERS
     )
-    
+
     # Process the chat with streaming
     stream = processor.create_openai_stream(
         model="gpt-4",
@@ -68,7 +67,7 @@ async def openai_example():
         user_data={"userId": "example_user"},
         mcp_servers=MCP_SERVERS
     )
-    
+
     # Print the streaming response
     async for chunk in stream:
         if hasattr(chunk, 'choices') and chunk.choices and hasattr(chunk.choices[0], 'delta'):
@@ -83,22 +82,22 @@ async def openai_example():
                 if 'content' in delta and 'type' in delta['content']:
                     if delta['content']['type'] == MessageType.PROGRESS:
                         print(f"\n[Progress: {delta['content']['content']}]")
-    
+
     print("\n")
 
 
 async def anthropic_example():
     """Example of using MCP with Anthropic."""
     logger.info("Running Anthropic example...")
-    
+
     # Initialize Anthropic client
     client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
-    
+
     # Create messages
     messages = [
         {"role": "user", "content": "Search for information about Python programming language."}
     ]
-    
+
     # Create MCP chat processor
     processor = MCPChat(
         model="claude-3-opus-20240229",
@@ -111,7 +110,7 @@ async def anthropic_example():
         max_tokens=1000,
         mcp_servers=MCP_SERVERS
     )
-    
+
     # Process the chat with streaming
     stream = processor.create_anthropic_stream(
         model="claude-3-opus-20240229",
@@ -124,7 +123,7 @@ async def anthropic_example():
         max_tokens=1000,
         mcp_servers=MCP_SERVERS
     )
-    
+
     # Print the streaming response
     async for chunk in stream:
         if hasattr(chunk, 'type'):
@@ -137,7 +136,7 @@ async def anthropic_example():
             if 'type' in dump and 'payload' in dump:
                 if dump['type'] == MessageType.PROGRESS:
                     print(f"\n[Progress: {dump['payload']['content']}]")
-    
+
     print("\n")
 
 

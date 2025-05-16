@@ -3,7 +3,7 @@ Chunk handling for MCP client responses.
 """
 import time
 import uuid
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
 
 class ChunkDelta:

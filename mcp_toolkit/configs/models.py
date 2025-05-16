@@ -3,7 +3,6 @@ Database models for MCP configurations.
 """
 import uuid
 from datetime import datetime
-from typing import Dict, List, Optional
 
 from sqlalchemy import Column, String, Boolean, JSON, DateTime
 from sqlalchemy.dialects.postgresql import UUID
@@ -14,7 +13,7 @@ Base = declarative_base()
 
 class TimestampMixin:
     """Mixin for adding created_at and updated_at timestamps to models."""
-    
+
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -49,6 +48,6 @@ class MCPModel(TimestampMixin, Base):
     args = Column(JSON, nullable=True)
     env_vars = Column(JSON, nullable=True)
     source = Column(String, nullable=True)
-    
+
     def __repr__(self):
         return f"<MCPModel(id={self.id}, name={self.mcp_name}, type={self.type})>"

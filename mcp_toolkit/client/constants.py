@@ -3,7 +3,8 @@ Constants for MCP client.
 """
 import datetime
 import uuid
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Optional
+
 
 # Message types for streaming
 class MessageType:
@@ -20,21 +21,21 @@ class MessageType:
 # Default MCP server model
 class MCPServerModel:
     """Model class for MCP server configuration."""
-    
+
     def __init__(
-        self,
-        id: uuid.UUID,
-        mcp_name: str,
-        sse_url: str,
-        user_id: str = "system",
-        inactive: bool = False,
-        type: str = "sse",
-        command: Optional[str] = None,
-        args: Optional[List[str]] = None,
-        env_vars: Optional[Dict[str, str]] = None,
-        source: str = "system",
-        created_at: Optional[datetime.datetime] = None,
-        updated_at: Optional[datetime.datetime] = None
+            self,
+            id: uuid.UUID,
+            mcp_name: str,
+            sse_url: str,
+            user_id: str = "system",
+            inactive: bool = False,
+            type: str = "sse",
+            command: Optional[str] = None,
+            args: Optional[List[str]] = None,
+            env_vars: Optional[Dict[str, str]] = None,
+            source: str = "system",
+            created_at: Optional[datetime.datetime] = None,
+            updated_at: Optional[datetime.datetime] = None
     ):
         """
         Initialize an MCP server model.
